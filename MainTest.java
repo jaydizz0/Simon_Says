@@ -16,7 +16,7 @@ public class MainTest {
         String[] userColours = {"red", "green", "blue"};
         String[] computerColours = {"red", "green", "blue"};
         int index = 1;
-        assertTrue(Main.checkSequence(userColours, computerColours, index));
+        assertTrue(Main.checkIndex(userColours, computerColours, index));
     }
 
     @Test
@@ -24,6 +24,6 @@ public class MainTest {
         String[] userColours = {"red", "green", "blue"};
         String[] computerColours = {"red", "yellow", "blue"};
         int index = 1;
-        assertFalse(Main.checkSequence(userColours, computerColours, index));
+        assertFalse(Main.checkIndex(userColours, computerColours, index));
     }
 }
