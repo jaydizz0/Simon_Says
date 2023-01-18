@@ -88,8 +88,8 @@ public class SimonSays {
         return lives;
     }
 
-    public String[] getColourArray(){
-        return colourArray;
+    public String getColourArray(int index){
+        return colourArray[index];
     }
 
     public String[] getGeneratedColourSequence(){
