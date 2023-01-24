@@ -1,81 +1,92 @@
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.Random;
+import java.util.Scanner;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-
+import java.io.IOException;
+import java.util.ArrayList;
 public class SimonSays {
+
     private int score;
     private int round;
     private int lives;
-    private String[] colourArray;
+    private String[] colorArray;
+    private String[] colorSequence;
+    private ArrayList<String> userInputSequence;
     private int highScore;
-    private Scanner input;
+    Scanner input = new Scanner(System.in);
 
-    public SimonSays(){
+    public SimonSays() {
         this.score = 0;
         this.round = 1;
         this.lives = 3;
-        this.colourArray = new String[]{"Red", "Green", "Blue", "Yellow"};
+        this.colorArray = new String[]{"Red", "Green", "Blue", "Yellow"};
         this.highScore = 0;
-        this.input = new Scanner(System.in);
+        this.userInputSequence = new ArrayList<>();
+
     }
 
-
-    public boolean playAgain(){
-        System.out.print("Want to play again?(Yes/No)");
-        String play = input.nextLine();
-        return play.equalsIgnoreCase("yes");
-    }
 
     public String[] generateColorSequence(int round) {
-        String[] colourSequence = new String[round];
+        String[] colorSequence = new String[round];
         for (int i = 0; i < round; i++) {
-            colourSequence[i] = pickColor(colourArray);
+            colorSequence[i] = pickColor(colorArray);
         }
-        return colourSequence;
+        return colorSequence;
     }
 
-    public int addScore(int Score){
-        return Score++;
-    }
-
-    public int addRound(int Round){
-        return Round++;
-    }
-
-    public void displayColorSequence(String[] colorSequence) {
-        for (String colorValue : colorSequence) {
-            System.out.println(colorValue + " ");
+    public boolean checkSequence(ArrayList<String> userSequence, String[] colourSequence) {
+        for (int i = 0; i <  round; i++) {
+            if (!userSequence.get(i).equals(colourSequence[i])) {
+                return false;
+            }
         }
+        return true;
     }
 
-    public boolean checkSequence(String[] userColours, String[] computerColours, int index) {
-        return userColours[index].equals(computerColours[index]);
-    }
+    public int updateHighScore(int newScore) {
+        try {
+            // Read from file
+            File file = new File("Highscore.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentHighScoreString = reader.readLine();
+            reader.close();
 
-    public String pickColor(String[] colors) {
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(colors.length);
-        return colors[randomIndex];
-    }
+            // Convert String to int
+            int currentHighScore = Integer.parseInt(currentHighScoreString);
 
-    public void updateHighScore(int score) {
-        if (score > highScore) {
-            highScore = score;
+            // Compare new score with current high score
+            if (newScore > currentHighScore) {
+                // Write new high score to file
+                currentHighScore = newScore;
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                writer.write(Integer.toString(newScore));
+                writer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return getHighScore();
     }
 
-    public int getHighScore() {
-        return highScore;
+
+    public boolean loseLife() {
+        lives--;
+        if (lives == 0) {
+            return true;
+        }
+        return false;
     }
 
-    public void setHighScore(int highScore) {
-        this.highScore = highScore;
+    public void updateScore() {
+        score++;
     }
 
+    public void nextRound(){
+        round++;
+    }
     public int getScore() {
         return score;
     }
@@ -88,16 +99,76 @@ public class SimonSays {
         return lives;
     }
 
-    public String getColourArray(int index){
-        return colourArray[index];
+    public String getColor(int index) {
+        return colorArray[index];
     }
 
-    public String[] getGeneratedColourSequence(){
-        return generateColorSequence(round);
+    public String[] getColorSequence() {
+        return colorSequence;
+    }
+
+    public ArrayList<String> getUserInputSequence(){
+        return userInputSequence;
+    }
+
+   
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    public int resetScore(){
+        score = 0;
+        return score;
+        
+    }
+    public int resetRound(){
+        round = 1;
+        return round;
+        
+    }
+    public String pickColor(String[] colors) {
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(colors.length);
+        return colors[randomIndex];
+    }
+
+    public boolean playAgain(){
+        System.out.print("Want to play again?(Yes/No)");
+        String play = input.nextLine();
+        return play.equalsIgnoreCase("yes");
+    }
+    
+    public void reset(){
+        lives = 3;
+        round = 1;
+        score = 0;
+    }
+
+    public void lostLife(){
+        lives = lives - 1;
+    }
+
+    public void startGame() {
+        colorSequence = generateColorSequence(round);
+        userInputSequence.clear();
     }
 
     
+  
+    public SimonSaysRoundState getRoundState(ArrayList<String> userSequence, String[] colorSequence) {
+        for (int i = 0; i < userSequence.size(); i++) {
+            if (!userSequence.get(i).equalsIgnoreCase(colorSequence[i])) {
+                return SimonSaysRoundState.DONE_FAILED;
+            } 
+        }
+        if (userSequence.size() < colorSequence.length) {                 
+            return SimonSaysRoundState.CONTINUE;
+        } else if (userSequence.size() == colorSequence.length) {
+            return SimonSaysRoundState.DONE_SUCCESS;
+        }
+
+        return SimonSaysRoundState.DONE_FAILED;
+    }
+
 }
-
-
-           
