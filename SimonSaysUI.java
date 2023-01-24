@@ -70,13 +70,13 @@ public class SimonSaysUI extends JFrame {
         highScoreLabel = new JLabel("High Score: " + simonSays.getHighScore());
         highScoreLabel.setForeground(Color.white);
         highScoreLabel.setFont(new Font("Comic Sans", Font.BOLD, 30));
-        highScoreLabel.setBounds(100, 200, 200, 100);
+        highScoreLabel.setBounds(100, 200, 250, 100);
         con.add(highScoreLabel);
         
         roundLabel = new JLabel("Round: " + simonSays.getRound());
         roundLabel.setForeground(Color.white);
         roundLabel.setFont(new Font("AComic Sans", Font.BOLD, 30));
-        roundLabel.setBounds(100, 100, 200, 100);
+        roundLabel.setBounds(100, 100, 250, 100);
         con.add(roundLabel);
 
 
@@ -224,13 +224,14 @@ public class SimonSaysUI extends JFrame {
     }
 
     public void endGame() {
+        simonSays.updateHighScore(simonSays.getScore());
         int result = JOptionPane.showConfirmDialog(null, "Game over! Your final score is " + simonSays.getScore() +
                 ". The high score is " + simonSays.getHighScore() + ". Do you want to play again?", "Game Over", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             simonSays.reset();
             scoreLabel.setText("Score: " + simonSays.getScore());
             roundLabel.setText("Round: " + simonSays.getRound());
-            highScoreLabel.setText("Highscore: " + simonSays.updateHighScore(simonSays.getScore()));
+            highScoreLabel.setText("Highscore: " + simonSays.getHighScore());
             startGame();
         } else {
             System.exit(0);

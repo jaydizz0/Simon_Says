@@ -46,7 +46,7 @@ public class SimonSays {
         return true;
     }
 
-    public int updateHighScore(int newScore) {
+    public void updateHighScore(int newScore) {
         try {
             // Read from file
             File file = new File("Highscore.txt");
@@ -68,9 +68,23 @@ public class SimonSays {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return getHighScore();
     }
 
+    public int getHighScore() {
+        try {
+            // Read from file
+            File file = new File("Highscore.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String currentHighScoreString = reader.readLine();
+            reader.close();
+    
+            // Convert String to int
+            highScore = Integer.parseInt(currentHighScoreString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return highScore;
+    }
 
     public boolean loseLife() {
         lives--;
@@ -112,10 +126,6 @@ public class SimonSays {
     }
 
    
-
-    public int getHighScore() {
-        return highScore;
-    }
 
     public int resetScore(){
         score = 0;
